@@ -1,0 +1,14 @@
+{
+  "name": "81725682fe8dc5e2",
+  "main": "81725682fe8dc5e2@185.js",
+  "version": "185.0.0",
+  "homepage": "https://observablehq.com/d/81725682fe8dc5e2",
+  "author": {
+    "name": "Eason Chen",
+    "url": "https://observablehq.com/@easonc13"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4"
+  }
+}
