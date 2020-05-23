@@ -2,15 +2,26 @@
 export default function define(runtime, observer) {
   const main = runtime.module();
   const fileAttachments = new Map([["flare.csv",new URL("./files/aee5d40e70ea9830c96efe6da03ad32187ff7223ad1b7b84e38c32127ccf6661b576fe0005b42657703e7bfaaefabc74550268cc35f64122a652fc471110c832",import.meta.url)]]);
+  console.log(fileAttachments);
   main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
   main.variable(observer()).define(["md"], function(md){return(
-md`# Bubble Chart
-
+md`# Stock Viewer
 Bubble charts are non-hierarchical [packed circles](/@d3/circle-packing). The area of each circle is proportional its value (here, file size). The organic appearance of these diagrams can be intriguing, but also consider a [treemap](/@d3/treemap) or a humble [bar chart](/@d3/horizontal-bar-chart).`
 )});
+
+
+
   main.variable(observer("chart")).define("chart", ["pack","data","d3","width","height","DOM","color","format"], function(pack,data,d3,width,height,DOM,color,format)
 {
+
+
   const root = pack(data);
+  console.log(data[0]);
+  for(var i=0;i<data.length;i++){
+    data[i].group = "NO";
+    data[i].title = ""
+    data[i].name = "QQ"
+  }
   
   const svg = d3.create("svg")
       .attr("viewBox", [0, 0, width, height])
@@ -43,9 +54,9 @@ Bubble charts are non-hierarchical [packed circles](/@d3/circle-packing). The ar
       .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
       .text(d => d);
 
-  leaf.append("title")
+  /*leaf.append("title")
       .text(d => `${d.data.title === undefined ? "" : `${d.data.title}
-`}${format(d.value)}`);
+`}${format(d.value)}`);*/
     
   return svg.node();
 }
