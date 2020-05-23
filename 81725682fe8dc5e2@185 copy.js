@@ -12,35 +12,23 @@ Bubble charts are non-hierarchical [packed circles](/@d3/circle-packing). The ar
 
   main.variable(observer("chart")).define("chart", ["pack","data","d3","width","height","DOM","color","format"], function(pack,data,d3,width,height,DOM,color,format)
 {
-  console.log(data);
-  var originData = data;
+
   data = fetch("https://fio3.ntnu.best/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/AAA")
   .then(function(response) {
     data = response.json().then(function(data){
-
-  var arrData = []
+      console.log(data);
+      return data;
+    })
+    console.log(data);
+    return data
+    // 處理 response
+  }).catch(function(err) {
+    // 錯誤處理
+});
   
+  console.log(data);
 
-  for(var i=0; i< data.length; i++){
-    console.log("AA",data[i])
-    data[i]["name"] = data[i]["ID"];
-    data[i]["value"] = data[i]["SDT"] * 1000000;
-    data[i]["group"] = "No";
-    data[i]["title"] = data[i]["ID"];
-
-    var out = Object()
-    out["name"] = data[i]["name"];
-    out["value"] = Math.abs(data[i]["value"]);
-    out["group"] = "No";
-    out["title"] = data[i]["ID"];
-
-    arrData.push(out)
-  }
-  data["columns"] = ["id", "value"];
-  arrData.columns = ["id", "value"];
-
-  console.log(arrData);
-  const root = pack(originData);
+  const root = pack(data);
   
   const svg = d3.create("svg")
       .attr("viewBox", [0, 0, width, height])
@@ -71,31 +59,19 @@ Bubble charts are non-hierarchical [packed circles](/@d3/circle-packing). The ar
     .join("tspan")
       .attr("x", 0)
       .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
-      .text(d => d)
-      .text(function(d){
-        return d
-      });
-      return svg.node();
-
-    })
-    return data
-    // 處理 response
-  })
-  
-  
+      .text(d => d);
 
   /*leaf.append("title")
       .text(d => `${d.data.title === undefined ? "" : `${d.data.title}
 `}${format(d.value)}`);*/
     
-
+  return svg.node();
 }
 );
   main.variable(observer("data")).define("data", ["d3","FileAttachment"], async function(d3,FileAttachment){return(
 d3.csvParse(await FileAttachment("flare.csv").text(), ({id, value}) => ({name: id.split(".").pop(), title: id.replace(/\./g, "/"), group: id.split(".")[1], value: +value}))
 )});
-  main.variable(observer("pack")).define("pack", ["d3","width","height"], function(d3,width,height){
-    return(
+  main.variable(observer("pack")).define("pack", ["d3","width","height"], function(d3,width,height){return(
 data => d3.pack()
     .size([width - 2, height - 2])
     .padding(3)
