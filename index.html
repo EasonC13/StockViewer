@@ -7,7 +7,10 @@
         <link rel="stylesheet" type="text/css" href="./main.css">
     </head>
     <body>
-        <svg width = "1000px" height="1000px"></svg>
+        <h1>StockViewer</h1>
+        <div></div>
+        <svg width = "800px" height="1000px"></svg>
+        <svg width = "600px" height="1000px" id="InfoBar"></svg>
         <script type="text/javascript">
         url = "https://fio3.ntnu.best/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/AAA"
 
@@ -62,7 +65,7 @@
 
         nodes = nodes.filter(function(it) { return it.parent; });*/
 
-        var pack = d3.pack().padding(2).size([1000,600]);
+        var pack = d3.pack().padding(2).size([800,1000]);
         var root = d3.hierarchy(dataObj)
         .sum(function(d){ return d.value})
         .sort((a, b) => b.data.value - a.data.value);
@@ -94,6 +97,11 @@
         .attr('cy', d => d.y)
         .attr('r', d => d.r)
         .attr('fill', function(d){
+            if(d.data.positive){
+                return "red";
+            }else{
+                return "green";
+            }
             return "white"
             console.log("IT",d);
             return riseCircleColor(d.data.value);},)
@@ -124,11 +132,11 @@
         .text(function(d,i){
             return d.data.name
         });
-        
+        d3.select('svg').append("text").attr("x",800).attr("y",800).text("AAA").style('fill', 'black').style('font-size', '30px')
  })
 })
-
-
+searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
+d3.select("#InfoBar").append("text").attr("x",100).attr("y",100).text("AAA").style('fill', 'black').style('font-size', '30px')
         </script>
     </body>
 </html>
