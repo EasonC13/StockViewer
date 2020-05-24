@@ -2,19 +2,26 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Bubble Chart</title>
-        <script src="https://d3js.org/d3.v3.min.js"></script>
+        <title>Stock Viewer - the most powerful tab for stock buyer.</title>
+        <script src="https://d3js.org/d3.v4.js"></script>
         <link rel="stylesheet" type="text/css" href="./main.css">
     </head>
     <body>
         <svg width = "1000px" height="1000px"></svg>
         <script type="text/javascript">
-        data = fetch("https://fio3.ntnu.best/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/AAA")
+        url = "https://fio3.ntnu.best/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/AAA"
+
+        //url = "http://104.199.229.42/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/AAA"
+
+        data = fetch(url)
         .then(function(response) {
             data = response.json().then(function(data){
 
         var arrData = []
         
+        var extreme = Object();
+        extreme.min = Infinity;
+        extreme.max = -Infinity;
 
         for(var i=0; i< data.length; i++){
             console.log("Data",data[i])
@@ -26,39 +33,98 @@
             var out = Object()
             out["name"] = data[i]["name"];
             out["value"] = Math.abs(data[i]["value"]);
+            out["positive"] = data[i]["value"]>0;
             out["group"] = "No";
             out["title"] = data[i]["ID"];
 
-            arrData.push(out)
+            if(data[i]["value"] > extreme.max){
+                extreme.max = data[i]["value"];
+            }else if(data[i]["value"] < extreme.min){
+                extreme.min = data[i]["value"];
+            }
+
+            arrData.push(out);
         }
+
         data["columns"] = ["id", "value"];
         arrData.columns = ["id", "value"];
 
         console.log(arrData);
-        var dataobj = { children: arrData };
+        var dataObj = { children: arrData };
 
-        console.log(d3);
-        var pack = d3.layout.pack();
+        
+        /*var pack = d3.pack(dataObj);
         pack = pack.padding(2).size([1000,600]);
-        var nodes = pack.nodes(dataobj);
-        nodes = nodes.filter(function(it) { return it.parent; });
+        
+        //var nodes = pack(dataObj).descendants();
+        nodes = dataObj;
+        console.log(nodes);
+
+        nodes = nodes.filter(function(it) { return it.parent; });*/
+
+        var pack = d3.pack().padding(2).size([1000,600]);
+        var root = d3.hierarchy(dataObj)
+        .sum(function(d){ return d.value})
+        .sort((a, b) => b.data.value - a.data.value);
+
+        var nodes = root.children;
+        nodes = pack(root.sum(d => d.value).sort((a, b) => b.value - a.value)).children;
+        console.log(nodes);
+
+
+
+        var riseCircleColor = d3.scaleSequential()
+        .domain([0, Math.abs(extreme.min)])
+        .interpolator(d3.interpolateGreens);
+
+        d3.scaleSequential()
+    .domain([0,99])
+    .interpolator(d3.interpolate("purple", "orange"));
 
         d3.select("svg")
         .selectAll("circle")                 // 建立 circle 的 Selection
         .data(nodes)                         // 綁定 selection 與資料
         .enter()                             // 對於任何沒被對應而落單的資料 ...
         .append("circle")                    // 新增一個 circle 標籤
-        .attr({
-            cx: function(it) { return it.x; }, // 用 x,y 當圓心
-            cy: function(it) { return it.y; },
-            r : function(it) { return it.r; }, // 用 r 當半徑
-            fill: "#ccc",                      // 填滿亮灰色
-            stroke: "#444",                    // 邊框畫深灰色
+        .attr("class", function(d, it){
+            return "circle";
         })
-        .text(function(d){
-            console.log(d.name);
-            return d.name;
+        .attr("id", d => d.data.name)
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y)
+        .attr('r', d => d.r)
+        .attr('fill', function(d){
+            return "white"
+            console.log("IT",d);
+            return riseCircleColor(d.data.value);},)
+        .attr('stroke', "#444");
+        /*.attr({
+            cx: function(d) { return d.x; }, // 用 x,y 當圓心
+            cy: function(d) { return d.y; },
+            r : function(d) { return d.r; }, // 用 r 當半徑
+            fill: function(d){
+                console.log("IT",d);
+                return riseCircleColor(it.r);
+            },                      // 填滿亮灰色
+            stroke: "#444",                    // 邊框畫深灰色
+        });*/
+
+        d3.select("svg")
+        .selectAll("text")
+        .data(nodes)
+        .enter()
+        .append("text")
+        .attr('x', function(d) {
+            return d.x - d.data.name.length*10;
+        })
+        .attr('y', function(d) {
+            return d.y + 10;
+        })
+        .style('fill', 'black').style('font-size', '30px')
+        .text(function(d,i){
+            return d.data.name
         });
+        
  })
 })
 
