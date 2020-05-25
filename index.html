@@ -12,9 +12,21 @@
         <svg width = "800px" height="1000px"></svg>
         <svg width = "600px" height="1000px" id="InfoBar"></svg>
         <script type="text/javascript">
+
+        function modifyUrlAndReload(url) {
+            let stateObj = { id: "100" };
+            window.history.replaceState(stateObj,
+                            "Page 3", url);
+            location.reload();
+            }
+
+        function replaceAll(string, search, replace) {
+            return string.split(search).join(replace);
+            }
+
         url = "https://fio3.ntnu.best/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/AAA"
 
-        //url = "http://104.199.229.42/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/AAA"
+        url = "http://104.199.229.42/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/day?limit=20"
 
         data = fetch(url)
         .then(function(response) {
@@ -26,8 +38,7 @@
         extreme.min = Infinity;
         extreme.max = -Infinity;
 
-        for(var i=0; i< data.length; i++){
-            console.log("Data",data[i])
+        for(i in data){
             data[i]["name"] = data[i]["ID"];
             data[i]["value"] = data[i]["SDT"] * 1000;
             data[i]["group"] = "No";
@@ -72,9 +83,10 @@
 
         var nodes = root.children;
         nodes = pack(root.sum(d => d.value).sort((a, b) => b.value - a.value)).children;
-        console.log(nodes);
 
-
+        nodes = nodes.filter(function(item){
+            return item.data.name!= undefined;
+        })
 
         var riseCircleColor = d3.scaleSequential()
         .domain([0, Math.abs(extreme.min)])
@@ -105,7 +117,12 @@
             return "white"
             console.log("IT",d);
             return riseCircleColor(d.data.value);},)
-        .attr('stroke', "#444");
+        .attr('stroke', "#444")
+        .on("click", function(d){
+            searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
+            searchURL = replaceAll(searchURL, "{StockID}", d.data.name);
+            modifyUrlAndReload(searchURL);
+        });
         /*.attr({
             cx: function(d) { return d.x; }, // 用 x,y 當圓心
             cy: function(d) { return d.y; },
@@ -116,7 +133,7 @@
             },                      // 填滿亮灰色
             stroke: "#444",                    // 邊框畫深灰色
         });*/
-
+        console.log(nodes)
         d3.select("svg")
         .selectAll("text")
         .data(nodes)
@@ -135,8 +152,12 @@
         d3.select('svg').append("text").attr("x",800).attr("y",800).text("AAA").style('fill', 'black').style('font-size', '30px')
  })
 })
-searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
-d3.select("#InfoBar").append("text").attr("x",100).attr("y",100).text("AAA").style('fill', 'black').style('font-size', '30px')
+        searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
+        d3.select("#InfoBar").append("text").attr("x",100).attr("y",100).text("AAA").style('fill', 'black').style('font-size', '30px')
+
+
+
+        
         </script>
     </body>
 </html>
