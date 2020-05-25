@@ -135,7 +135,7 @@
         .enter()                             // 對於任何沒被對應而落單的資料 ...
         .append("circle")                    // 新增一個 circle 標籤
         .attr("class", function(d, it){
-            return "circle";
+            return "circle circle-element";
         })
         .attr("id", d => d.data.name)
         .attr('cx', d => d.x)
@@ -151,15 +151,8 @@
             console.log("IT",d);
             return riseCircleColor(d.data.value);},)
         .attr('stroke', "#444")
-        .on("click", function(d){
-            searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
-            searchURL = replaceAll(searchURL, "{StockID}", d.data.name + " Stock");
-            modifyUrlAndReload(searchURL);
-        })
-        .on("mouseover", function(d){
-            showInfo(d.data.name, d.data.price);
-            
-        });
+
+        
         /*.attr({
             cx: function(d) { return d.x; }, // 用 x,y 當圓心
             cy: function(d) { return d.y; },
@@ -176,6 +169,9 @@
         .data(nodes)
         .enter()
         .append("text")
+        .attr("class", function(d, it){
+            return "text circle-element";
+        })
         .attr('x', function(d) {
             if(d.r < 60){
                 return d.x - d.data.name.length*10 + 14;
@@ -203,6 +199,17 @@
         })
         .text(function(d,i){
             return d.data.name
+        });
+
+        d3.selectAll(".circle-element")
+        .on("click", function(d){
+            searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
+            searchURL = replaceAll(searchURL, "{StockID}", d.data.name + " Stock");
+            modifyUrlAndReload(searchURL);
+        })
+        .on("mouseover", function(d){
+            showInfo(d.data.name, d.data.price);
+            
         });
         
  })
