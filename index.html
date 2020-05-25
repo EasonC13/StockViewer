@@ -26,9 +26,31 @@
             return string.split(search).join(replace);
             }
 
+        function showInfo(stockName, price){
+            d3.selectAll(".infoBar").remove();
+
+            d3.select("#InfoBar")
+            .append("text")
+            .attr("x",100)
+            .attr("y",100)
+            .attr("class", "infoBar")
+            .text(stockName)
+            .style('fill', 'black')
+            .style('font-size', '80px');
+
+            d3.select("#InfoBar")
+            .append("text")
+            .attr("x",100)
+            .attr("y",200)
+            .attr("class", "infoBar")
+            .text("Price Now: "+ String(price))
+            .style('fill', 'black')
+            .style('font-size', '30px');
+        }
+
         url = "https://fio3.ntnu.best/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/AAA"
 
-        //url = "http://104.199.229.42/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/day?limit=20"
+        url = "http://104.199.229.42/alpaca/%3Cgoogl%3E%3Caapl%3E%3Ctsla%3E%3Cfb%3E%3Camzn%3E/day?limit=20"
 
         data = fetch(url)
         .then(function(response) {
@@ -52,6 +74,7 @@
             out["positive"] = data[i]["value"]>0;
             out["group"] = "No";
             out["title"] = data[i]["ID"];
+            out.price = data[i]["Price_Now"];
 
             if(data[i]["value"] > extreme.max){
                 extreme.max = data[i]["value"];
@@ -122,8 +145,12 @@
         .attr('stroke', "#444")
         .on("click", function(d){
             searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
-            searchURL = replaceAll(searchURL, "{StockID}", d.data.name);
+            searchURL = replaceAll(searchURL, "{StockID}", d.data.name + " Stock");
             modifyUrlAndReload(searchURL);
+        })
+        .on("mouseover", function(d){
+            showInfo(d.data.name, d.data.price);
+            
         });
         /*.attr({
             cx: function(d) { return d.x; }, // 用 x,y 當圓心
@@ -155,7 +182,8 @@
  })
 })
         searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
-        d3.select("#InfoBar").append("text").attr("x",100).attr("y",100).text("AAA").style('fill', 'black').style('font-size', '30px')
+
+        
 
 
 
