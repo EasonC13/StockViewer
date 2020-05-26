@@ -11,8 +11,76 @@
         <h1>StockViewer</h1>
         <div></div>
         <svg width = "800px" height="1000px"></svg>
-        <svg width = "600px" height="1000px" id="InfoBar"></svg>
+        <svg width = "600px" height="850px" id="InfoBar"></svg>
+        <div font-size="300%">
+            <label for="stockName">Stock Name: </label>
+            <input type="text" id="stockName" name="stockName">
+            <button onclick="addStock(document.getElementById('stockName').value)">Add Stock</button>
+            <button onclick="removeStock(document.getElementById('stockName').value)">Remove Stock</button>
+            <button onclick="setDefault()">Default</button>
+        </div>
+        <script>
+            function replaceAll(string, search, replace) {
+                console.log("hi",search);
+                return string.split(search).join(replace);
+            }
+
+            function addStock(stockName){
+                needed = document.cookie.replace(/(?:(?:^|.*;\s*)needed\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+                needed += "<" + stockName + ">";
+                document.cookie = "needed="+needed;
+                location.reload();
+            }
+
+            function removeStock(stockName){
+                needed = document.cookie.replace(/(?:(?:^|.*;\s*)needed\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+                needed = replaceAll(needed, "<" + stockName.toUpperCase() + ">", "");
+                document.cookie = "needed="+needed;
+                location.reload();
+            }
+
+            function setDefault(){
+                stocks = ['VTI','VXUS','AMZN','GOOG','GOOGL','FB','ISRG','AAXN','T','VZ','F','GM','OKE','TERP','BIP','CTRE','IRBT','LULU','W','NFLX','STZ','AAPL','TSLA'];
+        
+                needed = ""
+
+                if(needed == ""){
+                    needed = ""
+                    for(i=0; i<stocks.length; i++){
+                        needed += "<"+stocks[i]+ ">";
+                    }
+                    document.cookie = "needed="+needed;
+                }
+                location.reload();
+            }
+        </script>
+
+        <script>
+            width = window.innerWidth;
+            height = window.innerHeight;
+            console.log(width, height);
+            if(width / height < 1){
+                d3.select("#InfoBar")
+                .attr("width", "800px")
+                .attr("height", "250px");
+            }else{
+                d3.select("#InfoBar")
+                .attr("width", "400px")
+                .attr("height", "900px");
+            }
+        </script>
+
         <script type="text/javascript">
+
+        
+        d3.select("svg")
+        .append("text")
+        .attr("class", "loadingElement")
+        .attr('x', 100)
+        .attr('y', "300")
+        .style('fill', "black")
+        .style('font-size', "50px")
+        .text("Loading... Please Wait.");
 
         function modifyUrlAndReload(url) {
             let stateObj = { id: "100" };
@@ -120,6 +188,8 @@
 
         nodes = nodes.filter(function(it) { return it.parent; });*/
 
+        d3.selectAll(".loadingElement").remove()
+
         var pack = d3.pack().padding(2).size([800,1000]);
         var root = d3.hierarchy(dataObj)
         .sum(function(d){ return d.value})
@@ -221,7 +291,8 @@
         .on("mouseover", function(d){
             showInfo(d.data.name, d.data.price);
             
-        });
+        })
+        .attr("href", "https://google.com");
         
  })
 })
