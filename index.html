@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <title>Stock Viewer - the most powerful tab for stock buyer.</title>
         <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="./main.css">
     </head>
     <body>
@@ -47,12 +48,23 @@
             .style('fill', 'black')
             .style('font-size', '30px');
         }
-        stocks = ['VTI','VXUS','AMZN','GOOG','GOOGL','FB','ISRG','AAXN','T','VZ','F','GM','OKE','TERP','BIP','CTRE','IRBT','LULU','W','NFLX','STZ']
+        stocks = ['VTI','VXUS','AMZN','GOOG','GOOGL','FB','ISRG','AAXN','T','VZ','F','GM','OKE','TERP','BIP','CTRE','IRBT','LULU','W','NFLX','STZ','AAPL','TSLA'];
 
-        needed = ""
-        for(i=0; i<stocks.length; i++){
-            needed += "<"+stocks[i]+ ">";
+        needed = document.cookie.replace(/(?:(?:^|.*;\s*)needed\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+
+        console.log("cookies", needed);
+        //document.cookie = newCookie;
+
+        if(needed == ""){
+            needed = ""
+            for(i=0; i<stocks.length; i++){
+                needed += "<"+stocks[i]+ ">";
+            }
+            document.cookie = "needed="+needed;
         }
+
+        
 
         url = "https://fio3.ntnu.best/alpaca/{neededStocks}/day?limit=80"
 
@@ -95,6 +107,7 @@
 
         data["columns"] = ["id", "value"];
         arrData.columns = ["id", "value"];
+
 
         console.log(arrData);
         var dataObj = { children: arrData };
