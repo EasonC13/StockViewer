@@ -21,15 +21,26 @@
         </div>
         <script>
             function replaceAll(string, search, replace) {
-                console.log("hi",search);
                 return string.split(search).join(replace);
             }
 
             function addStock(stockName){
-                needed = document.cookie.replace(/(?:(?:^|.*;\s*)needed\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-                needed += "<" + stockName + ">";
-                document.cookie = "needed="+needed;
-                location.reload();
+                stockName = stockName.toUpperCase();
+                url = DefaultUrl;
+                url = replaceAll(url, "{neededStocks}", "<"+stockName + ">");
+                data = fetch(url)
+                .then(function(response) {
+                    data = response.json().then(function(data){
+                        if(data[Object.keys(data)[0]].ID != undefined){
+                            needed = document.cookie.replace(/(?:(?:^|.*;\s*)needed\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+                            needed += "<" + stockName + ">";
+                            document.cookie = "needed="+needed;
+                            location.reload();
+                        }
+                    })
+                })
+
+                
             }
 
             function removeStock(stockName){
@@ -133,7 +144,8 @@
 
         
 
-        url = "https://fio3.ntnu.best/alpaca/{neededStocks}/day?limit=80"
+        DefaultUrl = "https://fio3.ntnu.best/alpaca/{neededStocks}/day?limit=80"
+        url = DefaultUrl;
 
         //url = "http://104.199.229.42/alpaca/{neededStocks}/day?limit=80"
 
