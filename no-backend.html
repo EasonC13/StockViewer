@@ -150,65 +150,78 @@
             }
             document.cookie = "needed="+needed;
         }
-
-
-
-        DefaultUrl = "https://fio3.ntnu.best/alpaca/{neededStocks}/day?limit=80"
-        url = DefaultUrl;
-
-        //url = "http://104.199.229.42/alpaca/{neededStocks}/day?limit=80"
-
-        url = replaceAll(url, "{neededStocks}", needed);
-        console.log(url);
-        data = fetch(url)
-        .then(function(response) {
-            data = response.json().then(function(data){
-
-        var arrData = []
         
-        var extreme = Object();
-        extreme.min = Infinity;
-        extreme.max = -Infinity;
+        console.log(needed);
+        needed_array = needed.split("><");
 
-        for(i in data){
-            data[i]["name"] = data[i]["ID"];
-            data[i]["value"] = data[i]["SDT"] * 1000;
-            data[i]["group"] = "No";
-            data[i]["title"] = data[i]["ID"];
+        needed_array[0] = replaceAll(needed_array[0], "<","")
+        needed_array[needed_array.length-1] = replaceAll(needed_array[needed_array.length-1], ">","")
+        console.log(needed_array);
 
-            var out = Object()
-            out["name"] = data[i]["name"];
-            out["value"] = Math.abs(data[i]["value"]);
-            out["positive"] = data[i]["value"]>0;
-            out["group"] = "No";
-            out["title"] = data[i]["ID"];
-            out.price = data[i]["Price_Now"];
+        DefaultUrl = "https://finnhub.io/api/v1/quote?symbol={StockID}&token=bqv06rvrh5r9f8vdnojg"
+        var AAA;
 
-            if(data[i]["value"] > extreme.max){
-                extreme.max = data[i]["value"];
-            }else if(data[i]["value"] < extreme.min){
-                extreme.min = data[i]["value"];
+        var promise = new Promise((resolve, reject) =>{
+            var arrData = []
+            var extreme = Object();
+            extreme.min = Infinity;
+            extreme.max = -Infinity;
+
+            function getStockNameByURL(url){
+                url = replaceAll(url, "https://finnhub.io/api/v1/quote?symbol=", "")
+                url = replaceAll(url, "&token=bqv06rvrh5r9f8vdnojg", "")
+                return url
             }
+            for(stockName in needed_array){
+                //console.log(needed_array[stockName]);
+                Stocksname = needed_array[stockName]
+                url = replaceAll(DefaultUrl, "{StockID}", needed_array[stockName])
+                console.log(url)
+                data = fetch(url)
+                .then(function(response) {
+                    data = response.json().then(function(data, url = response.url){
+                        stockName = getStockNameByURL(url);
+                        var out = Object()
+                        out["name"] = stockName;
+                        out["value"] = Math.abs(data.c - data.o);
+                        out["positive"] = data.c - data.o > 0;
+                        out["group"] = "No";
+                        out["title"] = stockName;
+                        out.price = data.c;
 
-            arrData.push(out);
-        }
+                        if(out.value > extreme.max){
+                            extreme.max = out.value;
+                        }else if(out.value < extreme.min){
+                            extreme.min = out.value;
+                        }
+                        arrData.push(out);
+                    })
+                })
+            }
+        console.log("ARRRRRR", arrData);
+        resolve({"data":arrData, "extreme": extreme});
+        }).then((value) => {
+            console.log("VALUE", value)
+            arrData = value.data;
 
+
+        
         data["columns"] = ["id", "value"];
-        arrData.columns = ["id", "value"];
+        //arrData.columns = ["id", "value"];
 
 
         console.log(arrData);
+
+        newArrData = []
+        console.log(arrData.length);
+        for(i=0;i<arrData.length;i++){
+            newArrData.push(arrData[i]);
+        }
+        arrData = newArrData;
+        console.log("new",arrData)
         var dataObj = { children: arrData };
 
         
-        /*var pack = d3.pack(dataObj);
-        pack = pack.padding(2).size([1000,600]);
-        
-        //var nodes = pack(dataObj).descendants();
-        nodes = dataObj;
-        console.log(nodes);
-
-        nodes = nodes.filter(function(it) { return it.parent; });*/
 
         d3.selectAll(".loadingElement").remove()
 
@@ -219,11 +232,13 @@
 
         var nodes = root.children;
         nodes = pack(root.sum(d => d.value).sort((a, b) => b.value - a.value)).children;
+        console.log(arrData);
+        console.log(dataObj, nodes);
 
-        nodes = nodes.filter(function(item){
-            return item.data.name!= undefined;
-        })
+        //開發到這裡，nodes 不見了，變undefined.
+        //發現是 arrData.length 對不起來，很怪，等待研究，去睡覺了。
 
+        extreme = value.extreme;
         var riseCircleColor = d3.scaleSequential()
         .domain([0, Math.abs(extreme.min)])
         .interpolator(d3.interpolateGreens);
@@ -256,16 +271,6 @@
         .attr('stroke', "#444")
 
         
-        /*.attr({
-            cx: function(d) { return d.x; }, // 用 x,y 當圓心
-            cy: function(d) { return d.y; },
-            r : function(d) { return d.r; }, // 用 r 當半徑
-            fill: function(d){
-                console.log("IT",d);
-                return riseCircleColor(it.r);
-            },                      // 填滿亮灰色
-            stroke: "#444",                    // 邊框畫深灰色
-        });*/
         console.log(nodes)
         d3.select("svg")
         .selectAll("text")
@@ -321,12 +326,10 @@
             
         })
         .attr("href", "https://google.com");
-        
- })
-})
         searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
 
         
+    })
 
 
 

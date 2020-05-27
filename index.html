@@ -223,6 +223,7 @@
         nodes = nodes.filter(function(item){
             return item.data.name!= undefined;
         })
+        console.log("NONO",nodes, "DDD", dataObj);
 
         var riseCircleColor = d3.scaleSequential()
         .domain([0, Math.abs(extreme.min)])
