@@ -10,7 +10,7 @@
     <body>
         <h1>StockViewer</h1>
         <div></div>
-        <svg width = "800px" height="1000px"></svg>
+        <svg width = "800px" height="800px"></svg>
         <svg width = "600px" height="850px" id="InfoBar"></svg>
         <div font-size="300%">
             <label for="stockName">Stock Name: </label>
@@ -71,14 +71,14 @@
             width = window.innerWidth;
             height = window.innerHeight;
             console.log(width, height);
-            if(width / height < 1){
+            if(width  <= 1400 ){
                 d3.select("#InfoBar")
                 .attr("width", "800px")
                 .attr("height", "250px");
             }else{
                 d3.select("#InfoBar")
                 .attr("width", "600px")
-                .attr("height", "900px");
+                .attr("height", "800px");
             }
         </script>
 
@@ -107,7 +107,7 @@
             return string.split(search).join(replace);
             }
 
-        function showInfo(stockName, price){
+        function showInfo(stockName, price, sdt){
             d3.selectAll(".infoBar").remove();
 
             d3.select("#InfoBar")
@@ -122,9 +122,18 @@
             d3.select("#InfoBar")
             .append("text")
             .attr("x",100)
-            .attr("y",200)
+            .attr("y",180)
             .attr("class", "infoBar")
             .text("Price Now: "+ String(price))
+            .style('fill', 'black')
+            .style('font-size', '30px');
+
+            d3.select("#InfoBar")
+            .append("text")
+            .attr("x",100)
+            .attr("y",220)
+            .attr("class", "infoBar")
+            .text("SDT: "+ String(sdt))
             .style('fill', 'black')
             .style('font-size', '30px');
         }
@@ -203,7 +212,7 @@
 
         d3.selectAll(".loadingElement").remove()
 
-        var pack = d3.pack().padding(2).size([800,1000]);
+        var pack = d3.pack().padding(2).size([800,800]);
         var root = d3.hierarchy(dataObj)
         .sum(function(d){ return d.value})
         .sort((a, b) => b.data.value - a.data.value);
@@ -287,7 +296,7 @@
         })
         .style('font-size', function(d){
             if(d.r < 60){
-                return "20px"
+                return "18px"
             }
             return "30px"
         })
@@ -302,7 +311,7 @@
             modifyUrlAndReload(searchURL);
         })
         .on("mouseover", function(d){
-            showInfo(d.data.name, d.data.price);
+            showInfo(d.data.name, d.data.price, d.data.value);
             
         })
         .attr("href", "https://google.com");
