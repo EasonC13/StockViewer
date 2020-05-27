@@ -276,13 +276,17 @@
             return "text circle-element";
         })
         .attr('x', function(d) {
-            if(d.r < 60){
-                return d.x - d.data.name.length*10 + 14;
+            if(d.r < 30){
+                return d.x - d.data.name.length*9 + 20;
+            }else if(d.r < 60){
+                return d.x - d.data.name.length*9 + 14;
             }
             return d.x - d.data.name.length*10;
         })
         .attr('y', function(d) {
-            if(d.r < 60){
+            if(d.r < 30){
+                return d.y+2;
+            }else if(d.r < 60){
                 return d.y + 4;
             }
             return d.y + 10;
@@ -295,7 +299,9 @@
             }
         })
         .style('font-size', function(d){
-            if(d.r < 60){
+            if(d.r < 30){
+                return "12px"
+            }else if(d.r < 60){
                 return "18px"
             }
             return "30px"
