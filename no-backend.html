@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Stock Viewer - the most powerful tab for stock buyer.</title>
+        <script src="https://d3js.org/d3.v4.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="./main.css">
+    </head>
+    <body>
+        <h1>StockViewer</h1>
+        <div></div>
+        <svg width = "800px" height="800px"></svg>
+        <svg width = "600px" height="850px" id="InfoBar"></svg>
+        <div font-size="300%">
+            <label for="stockName">Stock Name: </label>
+            <input type="text" id="stockName" name="stockName">
+            <button onclick="addStock(document.getElementById('stockName').value)">Add Stock</button>
+            <button onclick="removeStock(document.getElementById('stockName').value)">Remove Stock</button>
+            <button onclick="setDefault()">Default</button>
+        </div>
+        <script>
+            function replaceAll(string, search, replace) {
+                return string.split(search).join(replace);
+            }
+
+            function addStock(stockName){
+                stockName = stockName.toUpperCase();
+                url = DefaultUrl;
+                url = replaceAll(url, "{neededStocks}", "<"+stockName + ">");
+                data = fetch(url)
+                .then(function(response) {
+                    data = response.json().then(function(data){
+                        if(data[Object.keys(data)[0]].ID != undefined){
+                            needed = document.cookie.replace(/(?:(?:^|.*;\s*)needed\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+                            needed += "<" + stockName + ">";
+                            document.cookie = "needed="+needed;
+                            location.reload();
+                        }
+                    })
+                })
+
+                
+            }
+
+            function removeStock(stockName){
+                needed = document.cookie.replace(/(?:(?:^|.*;\s*)needed\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+                needed = replaceAll(needed, "<" + stockName.toUpperCase() + ">", "");
+                document.cookie = "needed="+needed;
+                location.reload();
+            }
+
+            function setDefault(){
+                stocks = ['VTI','VXUS','AMZN','GOOG','GOOGL','FB','ISRG','AAXN','T','VZ','F','GM','OKE','TERP','BIP','CTRE','IRBT','LULU','W','NFLX','STZ','AAPL','TSLA'];
+        
+                needed = "";
+
+                if(needed == ""){
+                    needed = ""
+                    for(i=0; i<stocks.length; i++){
+                        needed += "<"+stocks[i]+ ">";
+                    }
+                    document.cookie = "needed="+needed;
+                }
+                location.reload();
+            }
+        </script>
+
+        <script>
+            //React
+            width = window.innerWidth;
+            height = window.innerHeight;
+            console.log(width, height);
+            if(width  <= 1400 ){
+                d3.select("#InfoBar")
+                .attr("width", "800px")
+                .attr("height", "250px");
+            }else{
+                d3.select("#InfoBar")
+                .attr("width", "600px")
+                .attr("height", "800px");
+            }
+        </script>
+
+        <script type="text/javascript">
+
+        
+        d3.select("svg")
+        .append("text")
+        .attr("class", "loadingElement")
+        .attr('x', 100)
+        .attr('y', "300")
+        .style('fill', "black")
+        .style('font-size', "50px")
+        .text("Loading... Please Wait.");
+
+        function modifyUrlAndReload(url) {
+            let stateObj = { id: "100" };
+            /*window.history.replaceState(stateObj,
+                            "Page 3", url);*/
+            //location.href = url;
+            window.open(url);
+            //location.reload();
+            }
+
+        function replaceAll(string, search, replace) {
+            return string.split(search).join(replace);
+            }
+
+        function showInfo(stockName, price, sdt){
+            d3.selectAll(".infoBar").remove();
+
+            d3.select("#InfoBar")
+            .append("text")
+            .attr("x",100)
+            .attr("y",100)
+            .attr("class", "infoBar")
+            .text(stockName)
+            .style('fill', 'black')
+            .style('font-size', '80px');
+
+            d3.select("#InfoBar")
+            .append("text")
+            .attr("x",100)
+            .attr("y",180)
+            .attr("class", "infoBar")
+            .text("Price Now: "+ String(price))
+            .style('fill', 'black')
+            .style('font-size', '30px');
+
+            d3.select("#InfoBar")
+            .append("text")
+            .attr("x",100)
+            .attr("y",220)
+            .attr("class", "infoBar")
+            .text("SDT: "+ String(sdt))
+            .style('fill', 'black')
+            .style('font-size', '30px');
+        }
+        stocks = ['VTI','VXUS','AMZN','GOOG','GOOGL','FB','ISRG','AAXN','T','VZ','F','GM','OKE','TERP','BIP','CTRE','IRBT','LULU','W','NFLX','STZ','AAPL','TSLA'];
+        
+        needed = document.cookie.replace(/(?:(?:^|.*;\s*)needed\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        console.log("cookies", needed);
+        //document.cookie = newCookie;
+
+        if(needed == ""){
+            needed = ""
+            for(i=0; i<stocks.length; i++){
+                needed += "<"+stocks[i]+ ">";
+            }
+            document.cookie = "needed="+needed;
+        }
+
+
+
+        DefaultUrl = "https://fio3.ntnu.best/alpaca/{neededStocks}/day?limit=80"
+        url = DefaultUrl;
+
+        //url = "http://104.199.229.42/alpaca/{neededStocks}/day?limit=80"
+
+        url = replaceAll(url, "{neededStocks}", needed);
+        console.log(url);
+        data = fetch(url)
+        .then(function(response) {
+            data = response.json().then(function(data){
+
+        var arrData = []
+        
+        var extreme = Object();
+        extreme.min = Infinity;
+        extreme.max = -Infinity;
+
+        for(i in data){
+            data[i]["name"] = data[i]["ID"];
+            data[i]["value"] = data[i]["SDT"] * 1000;
+            data[i]["group"] = "No";
+            data[i]["title"] = data[i]["ID"];
+
+            var out = Object()
+            out["name"] = data[i]["name"];
+            out["value"] = Math.abs(data[i]["value"]);
+            out["positive"] = data[i]["value"]>0;
+            out["group"] = "No";
+            out["title"] = data[i]["ID"];
+            out.price = data[i]["Price_Now"];
+
+            if(data[i]["value"] > extreme.max){
+                extreme.max = data[i]["value"];
+            }else if(data[i]["value"] < extreme.min){
+                extreme.min = data[i]["value"];
+            }
+
+            arrData.push(out);
+        }
+
+        data["columns"] = ["id", "value"];
+        arrData.columns = ["id", "value"];
+
+
+        console.log(arrData);
+        var dataObj = { children: arrData };
+
+        
+        /*var pack = d3.pack(dataObj);
+        pack = pack.padding(2).size([1000,600]);
+        
+        //var nodes = pack(dataObj).descendants();
+        nodes = dataObj;
+        console.log(nodes);
+
+        nodes = nodes.filter(function(it) { return it.parent; });*/
+
+        d3.selectAll(".loadingElement").remove()
+
+        var pack = d3.pack().padding(2).size([800,800]);
+        var root = d3.hierarchy(dataObj)
+        .sum(function(d){ return d.value})
+        .sort((a, b) => b.data.value - a.data.value);
+
+        var nodes = root.children;
+        nodes = pack(root.sum(d => d.value).sort((a, b) => b.value - a.value)).children;
+
+        nodes = nodes.filter(function(item){
+            return item.data.name!= undefined;
+        })
+
+        var riseCircleColor = d3.scaleSequential()
+        .domain([0, Math.abs(extreme.min)])
+        .interpolator(d3.interpolateGreens);
+
+        d3.scaleSequential()
+    .domain([0,99])
+    .interpolator(d3.interpolate("purple", "orange"));
+
+        d3.select("svg")
+        .selectAll("circle")                 // 建立 circle 的 Selection
+        .data(nodes)                         // 綁定 selection 與資料
+        .enter()                             // 對於任何沒被對應而落單的資料 ...
+        .append("circle")                    // 新增一個 circle 標籤
+        .attr("class", function(d, it){
+            return "circle circle-element";
+        })
+        .attr("id", d => d.data.name)
+        .attr('cx', d => d.x)
+        .attr('cy', d => d.y)
+        .attr('r', d => d.r)
+        .attr('fill', function(d){
+            if(d.data.positive){
+                return "red";
+            }else{
+                return "green";
+            }
+            return "white"
+            console.log("IT",d);
+            return riseCircleColor(d.data.value);},)
+        .attr('stroke', "#444")
+
+        
+        /*.attr({
+            cx: function(d) { return d.x; }, // 用 x,y 當圓心
+            cy: function(d) { return d.y; },
+            r : function(d) { return d.r; }, // 用 r 當半徑
+            fill: function(d){
+                console.log("IT",d);
+                return riseCircleColor(it.r);
+            },                      // 填滿亮灰色
+            stroke: "#444",                    // 邊框畫深灰色
+        });*/
+        console.log(nodes)
+        d3.select("svg")
+        .selectAll("text")
+        .data(nodes)
+        .enter()
+        .append("text")
+        .attr("class", function(d, it){
+            return "text circle-element";
+        })
+        .attr('x', function(d) {
+            if(d.r < 30){
+                return d.x - d.data.name.length*9 + 20;
+            }else if(d.r < 60){
+                return d.x - d.data.name.length*9 + 14;
+            }
+            return d.x - d.data.name.length*10;
+        })
+        .attr('y', function(d) {
+            if(d.r < 30){
+                return d.y+2;
+            }else if(d.r < 60){
+                return d.y + 4;
+            }
+            return d.y + 10;
+        })
+        .style('fill', function(d){
+            if(d.data.positive){
+                return "black";
+            }else{
+                return "white";
+            }
+        })
+        .style('font-size', function(d){
+            if(d.r < 30){
+                return "12px"
+            }else if(d.r < 60){
+                return "18px"
+            }
+            return "30px"
+        })
+        .text(function(d,i){
+            return d.data.name
+        });
+
+        d3.selectAll(".circle-element")
+        .on("click", function(d){
+            searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
+            searchURL = replaceAll(searchURL, "{StockID}", d.data.name + " Stock");
+            modifyUrlAndReload(searchURL);
+        })
+        .on("mouseover", function(d){
+            showInfo(d.data.name, d.data.price, d.data.value);
+            
+        })
+        .attr("href", "https://google.com");
+        
+ })
+})
+        searchURL = 'https://www.google.com/search?q={StockID}&oq={StockID}';
+
+        
+
+
+
+        
+        </script>
+    </body>
+</html>
