@@ -53,7 +53,7 @@
             function setDefault(){
                 stocks = ['VTI','VXUS','AMZN','GOOG','GOOGL','FB','ISRG','AAXN','T','VZ','F','GM','OKE','TERP','BIP','CTRE','IRBT','LULU','W','NFLX','STZ','AAPL','TSLA'];
         
-                needed = ""
+                needed = "";
 
                 if(needed == ""){
                     needed = ""
@@ -77,7 +77,7 @@
                 .attr("height", "250px");
             }else{
                 d3.select("#InfoBar")
-                .attr("width", "400px")
+                .attr("width", "600px")
                 .attr("height", "900px");
             }
         </script>
@@ -142,7 +142,7 @@
             document.cookie = "needed="+needed;
         }
 
-        
+
 
         DefaultUrl = "https://fio3.ntnu.best/alpaca/{neededStocks}/day?limit=80"
         url = DefaultUrl;
