@@ -1,5 +1,9 @@
 # StockViewer 
-專案網址： https://easonc13.github.io/StockViewer/
+> This is a Mid-Term Project of DataVisualization class at NTNU.
+
+This Project's WebSite is avaliable on https://easonc13.github.io/StockViewer
+
+You can also [check the presentation's slide to get more information about this](https://drive.google.com/file/d/1K_u4gkYNPpOMz9fVUfN1IAjuMHlWWAKm/view).
 
 因為身邊有很多朋友都有在看盤，而且 Tony 有在做關於股票漲跌預測模型。
 
