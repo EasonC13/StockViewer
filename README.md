@@ -2,6 +2,7 @@
 專案網址： https://easonc13.github.io/StockViewer/
 
 因為身邊有很多朋友都有在看盤，而且 Tony 有在做關於股票漲跌預測模型。
+
 因此我們想做一個資料視覺化的網頁，讓使用者一目瞭然指定的股票的漲跌趨勢。
 
 ## 於是 StockViewer 就誕生了！
