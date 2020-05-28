@@ -4,7 +4,7 @@
 This Project's WebSite is avaliable on https://easonc13.github.io/StockViewer
 
 You can also [Download the presentation's slide to get more information about this (clickable)](https://drive.google.com/file/d/1K_u4gkYNPpOMz9fVUfN1IAjuMHlWWAKm/view)
-(Because of the slide's size is 26 mb, plz Download it and view it.)
+(Because of the slide's size is 26 mb, please Download it and view it.)
 
 ---
 
