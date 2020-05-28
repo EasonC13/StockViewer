@@ -1,10 +1,6 @@
-本程式的線上版網址： https://easonc13.github.io/StockViewer/
-
-本程式的 GitHub: https://github.com/EasonC13/StockViewer
-（發表時的簡報，到時候也會更新在上面。）
-（建議到 GitHub 看）
-
 # StockViewer 
+專案網址： https://easonc13.github.io/StockViewer/
+
 因為身邊有很多朋友都有在看盤，而且 Tony 有在做關於股票漲跌預測模型。
 因此我們想做一個資料視覺化的網頁，讓使用者一目瞭然指定的股票的漲跌趨勢。
 
