@@ -1,6 +1,4 @@
-README.md for backend.
-
-Please add an config.ini have content like this:
+Please add a ``config.ini`` have content like this:
 
 ```
 [DEFAULT]
