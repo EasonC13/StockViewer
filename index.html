@@ -2,7 +2,23 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Stock Viewer - the most powerful tab for stock buyer.</title>
+        <title>Stock Viewer</title>
+        <meta name="title" content="Stock-Viewer">
+        <meta name="description" content="">
+
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="http://stockviewer.tsraise.com/">
+        <meta property="og:title" content="Stock-Viewer">
+        <meta property="og:description" content="The most powerful dashboard for stock buyers">
+        <meta property="og:image" content="https://easonc13.github.io/WordCommenter/featureImgNew.png">
+
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <!--meta property="twitter:url" content="https://tsraise.com"-->
+        <meta property="twitter:title" content="Word-Commenter">
+        <meta property="twitter:description" content="The most powerful dashboard for stock buyers">
+        <meta property="twitter:image" content="https://easonc13.github.io/WordCommenter/featureImgNew.png">
         <script src="https://d3js.org/d3.v4.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <link rel="stylesheet" type="text/css" href="./main.css">
@@ -23,13 +39,13 @@
         <hr>
         <div>
             <h1 id="stockviewer">StockViewer</h1>
-            <p>This Project&#39;s Source Code are avaliable on <a href="https://github.com/EasonC13/StockViewer">EasonC13&#39;s GitHub</a></p>
-            <p>You can also <a href="https://drive.google.com/file/d/129v98gWWVDxhEzZvBOJRJzP4a1oDUWDU/view?usp=sharing">Check the presentation&#39;s slide to get more information (clickable)</a></p>
+            <p>This Project&#39;s Source Code are avaliable on <a href="https://github.com/EasonC13/StockViewer" target="_blank">EasonC13&#39;s GitHub</a></p>
+            <p>You can also <a href="https://drive.google.com/file/d/129v98gWWVDxhEzZvBOJRJzP4a1oDUWDU/view?usp=sharing" target="_blank">Check the presentation&#39;s slide to get more information (clickable)</a></p>
             <br><hr>
             <p>因為身邊有很多朋友都有在看盤，而且 Tony 有在做關於股票漲跌預測模型。</p>
             <p>因此我們想做一個資料視覺化的網頁，讓使用者一目瞭然指定的股票的漲跌趨勢。</p>
             <h2 id="-stockviewer-">於是 StockViewer 就誕生了！</h2>
-            <p>採用前後端分離的模式進行開發，後端主要由 Tony 負責建設，使用 Python 搭配 FastAPI，經過 <a href="https://pypi.org/project/alpaca-trade-api/">Alpaca API</a> 抓取即時的股票資料，並作運算處理，計算出股票的漲跌幅度後，傳送至前端伺服器進行顯示。</p>
+            <p>採用前後端分離的模式進行開發，後端主要由 Tony 負責建設，使用 Python 搭配 FastAPI，經過 <a href="https://pypi.org/project/alpaca-trade-api/" target="_blank">Alpaca API</a> 抓取即時的股票資料，並作運算處理，計算出股票的漲跌幅度後，傳送至前端伺服器進行顯示。</p>
             <p>前端主要由怡升負責建置，圓圈的大小，代表今天該股票漲跌的幅度。圓圈內的顏色，紅色代表漲，綠色代表跌（目前版本是這樣，未來考慮新增自訂顏色功能）。</p>
             <hr>
             <p>使用者可以在下面新增/刪除股票，使用者指定的股票，會被記錄在 cookies 中，未來會顯示同樣的股票，也可以使用 Default 選項，清除 cookies。</p>
