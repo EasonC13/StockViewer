@@ -1,4 +1,5 @@
 # StockViewer 
+![StockViewer](https://stockviewer.tsraise.com/featureImg.png)
 > This is a Mid-Term Project of DataVisualization class at NTNU.
 
 This Project's WebSite is avaliable on https://easonc13.github.io/StockViewer
